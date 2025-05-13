@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports: ["1883:1883"]
+
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    privileged: true
+    devices:
+      - /dev/bus/usb
+    volumes:
+      - ../config/frigate.yml:/config/frigate.yml
+      - /dev/shm:/dev/shm
+    ports:
+      - "5000:5000"
+
+  codeprojectai:
+    image: codeproject/ai-server:arm64v8
+    ports: ["32168:32168"]
+    volumes:
+      - ../config/modules.json:/app/modules.json
+
+  scorer:
+    image: arm64v8/python:3.10-slim
+    env_file: ../scripts/scorer.env
+    volumes:
+      - ../scripts/scorer.py:/scorer.py
+      - ../homebase/gpio_relay.py:/gpio_relay.py
+    command: python /scorer.py
+
+  audio:
+    image: arm64v8/python:3.10-slim
+    devices: ["hw:1,0"]
+    volumes:
+      - ../audio_service:/srv
+    working_dir: /srv
+    command: sh -c "pip install -r requirements.txt && python audio_service.py"

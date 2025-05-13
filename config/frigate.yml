@@ -1,0 +1,15 @@
+mqtt: { host: mosquitto }
+
+detectors:
+  coral: { type: edgetpu }               # Jetson users: change to tensorrt
+
+external_detector:
+  codeprojectai: { url: http://codeprojectai:32168 }
+
+cameras:
+  front_yard:
+    ffmpeg:
+      inputs:
+        - path: rtsp://USER:PASS@CAM_IP/stream
+          roles: [detect,record]
+    detect: { width:1280, height:720, fps:5, detector: coral }

@@ -1,0 +1,5 @@
+[
+  { "module": "objectdetection.weapons.onnx",                "enabled": true },
+  { "module": "classification.clothing_custom.onnx",         "enabled": true },
+  { "module": "pose.coco_keypoints.onnx",                    "enabled": true }
+]
